@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics - Smart Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="app-layout">
+
+    <aside class="sidebar">
+        <h2>Menu</h2>
+
+        <nav class="menu">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('history') }}">History</a>
+            <a href="{{ url_for('statistics') }}" class="active">
+                Statistics
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="header">
+            <div>
+                <h1>Smart Expense Tracker</h1>
+                <p class="current-date"></p>
+            </div>
+
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                Log out
+            </a>
+        </header>
+
+        <div class="card">
+            <h2>Financial Statistics</h2>
+
+            <form method="GET" class="transaction-form">
+
+                <div class="form-group">
+                    <label>View by</label>
+                    <select name="period">
+                        <option value="week"
+                            {% if period == "week" %}selected{% endif %}>
+                            Week
+                        </option>
+
+                        <option value="month"
+                            {% if period == "month" %}selected{% endif %}>
+                            Month
+                        </option>
+
+                        <option value="year"
+                            {% if period == "year" %}selected{% endif %}>
+                            Year
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Choose a date</label>
+                    <input
+                        type="date"
+                        name="date"
+                        value="{{ selected_date }}"
+                    >
+                </div>
+
+                <button type="submit">Show Statistics</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Financial Summary</h2>
+
+            <div class="summary">
+
+                <div class="summary-box">
+                    <h3>Total Income</h3>
+                    <p class="income">
+                        {{ "%.2f"|format(total_income) }} RON
+                    </p>
+                </div>
+
+                <div class="summary-box">
+                    <h3>Total Expenses</h3>
+                    <p class="expense">
+                        {{ "%.2f"|format(total_expenses) }} RON
+                    </p>
+                </div>
+
+                <div class="summary-box">
+                    <h3>Balance</h3>
+                    <p class="balance">
+                        {{ "%.2f"|format(balance) }} RON
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Income vs Expenses</h2>
+
+            <div class="chart-container">
+                <canvas id="financeChart"></canvas>
+            </div>
+        </div>
+
+        <footer>Smart Expense Tracker</footer>
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+<script>
+    // Current date
+    let today = new Date();
+
+    document.querySelector(".current-date").textContent =
+        today.toLocaleDateString("ro-RO", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+
+    // Data from Python
+    let labels = {{ labels | tojson }};
+    let income = {{ income_data | tojson }};
+    let expenses = {{ expense_data | tojson }};
+
+    let chart = document.getElementById("financeChart");
+
+    // Create the chart
+    new Chart(chart, {
+        type: "bar",
+
+        data: {
+            labels: labels,
+
+            datasets: [
+                {
+                    label: "Income",
+                    data: income,
+                    backgroundColor: "#68b99c",
+                    hoverBackgroundColor: "#399c79",
+                    borderRadius: 7,
+                    borderSkipped: false,
+                    maxBarThickness: 32
+                },
+                {
+                    label: "Expenses",
+                    data: expenses,
+                    backgroundColor: "#e8899c",
+                    hoverBackgroundColor: "#d65d79",
+                    borderRadius: 7,
+                    borderSkipped: false,
+                    maxBarThickness: 32
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            interaction: {
+                mode: "index",
+                intersect: false
+            },
+
+            plugins: {
+                legend: {
+                    position: "top",
+                    align: "end",
+
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: "circle",
+                        padding: 20,
+                        color: "#65758e",
+                        font: {
+                            size: 13
+                        }
+                    }
+                },
+
+                tooltip: {
+                    backgroundColor: "#253047",
+                    padding: 12,
+                    cornerRadius: 8,
+
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ": " +
+                                context.parsed.y.toLocaleString("ro-RO", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }) + " RON";
+                        }
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+
+                    border: {
+                        display: false
+                    },
+
+                    ticks: {
+                        color: "#8995a8",
+                        maxTicksLimit: 9,
+                        maxRotation: 0,
+                        autoSkip: true
+                    }
+                },
+
+                y: {
+                    beginAtZero: true,
+
+                    border: {
+                        display: false,
+                        dash: [4, 4]
+                    },
+
+                    grid: {
+                        color: "#edf1f7"
+                    },
+
+                    ticks: {
+                        color: "#8995a8",
+                        padding: 10,
+                        maxTicksLimit: 6
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

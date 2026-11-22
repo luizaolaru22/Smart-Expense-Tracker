@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - Smart Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="app-layout">
+
+    <aside class="sidebar">
+        <h2>Menu</h2>
+
+        <nav class="menu">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('history') }}" class="active">History</a>
+            <a href="{{ url_for('statistics') }}">Statistics</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="header">
+            <div>
+                <h1>Smart Expense Tracker</h1>
+                <p class="current-date"></p>
+            </div>
+
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                Log out
+            </a>
+        </header>
+
+        <div class="card">
+            <h2>Transaction History</h2>
+
+            {% if transactions %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ "%.2f"|format(transaction[1]) }} RON</td>
+
+                                <td>
+                                    {% if transaction[2] == "income" %}
+                                        <span class="income-label">Income</span>
+                                    {% else %}
+                                        <span class="expense-label">Expense</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>{{ transaction[3] }}</td>
+                                <td>{{ transaction[5] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No transactions yet.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <footer>Smart Expense Tracker</footer>
+
+    </main>
+</div>
+
+<script>
+    let today = new Date();
+
+    document.querySelector(".current-date").textContent =
+        today.toLocaleDateString("ro-RO", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+</script>
+
+</body>
+</html>
