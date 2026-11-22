@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Smart Expense Tracker</h1>
+        <p>Aplicatia pentru gestionarea veniturilor si cheltuielilor.</p>
+
+        <div class="card">
+            <h2>Adauga o tranzactie</h2>
+
+            <form>
+                <label>Suma:</label>
+                <input type="number" name="suma" step="0.01" min="0.01">
+
+                <label>Categorie:</label>
+                <select name="categorie">
+                    <option>Mancare</option>
+                    <option>Transport</option>
+                    <option>Cumparaturi</option>
+                    <option>Altele</option>
+                </select>
+
+                <button type="submit">Adauga</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Tranzactiile mele</h2>
+            <p>Aici vor aparea tranzactiile.</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
