@@ -1,5 +1,6 @@
 
 import sqlite3
+from datetime import date
 
 
 def create_database():
@@ -19,6 +20,30 @@ def create_database():
 
     conn.commit()
     conn.close()
+
+
+def add_transaction(amount, category):
+    conn = sqlite3.connect("expenses.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO transactions (amount, type, category, description, date)
+        VALUES (?, ?, ?, ?, ?)
+    """, (amount, "expense", category, "", date.today().isoformat()))
+
+    conn.commit()
+    conn.close()
+
+
+def get_transactions():
+    conn = sqlite3.connect("expenses.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM transactions ORDER BY id DESC")
+    transactions = cursor.fetchall()
+
+    conn.close()
+    return transactions
 
 
 if __name__ == "__main__":
