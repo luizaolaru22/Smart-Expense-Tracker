@@ -29,6 +29,32 @@ p {
     box-shadow: 0 2px 8px #dddddd;
 }
 
+.summary {
+    display: flex;
+    gap: 15px;
+}
+
+.summary-box {
+    background-color: #f4f6f9;
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1;
+    text-align: center;
+}
+
+.summary-box p {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.income {
+    color: #218838;
+}
+
+.expense {
+    color: #dc3545;
+}
+
 input, select {
     padding: 10px;
     margin: 10px;
@@ -47,4 +73,20 @@ button {
 
 button:hover {
     background-color: #173669;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f4f6f9;
 }

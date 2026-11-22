@@ -14,18 +14,46 @@
         <p>Aplicatia pentru gestionarea veniturilor si cheltuielilor.</p>
 
         <div class="card">
+            <h2>Situatia financiara</h2>
+
+            <div class="summary">
+                <div class="summary-box">
+                    <h3>Venituri</h3>
+                    <p class="income">{{ "%.2f"|format(income) }} RON</p>
+                </div>
+
+                <div class="summary-box">
+                    <h3>Cheltuieli</h3>
+                    <p class="expense">{{ "%.2f"|format(expenses) }} RON</p>
+                </div>
+
+                <div class="summary-box">
+                    <h3>Sold disponibil</h3>
+                    <p>{{ "%.2f"|format(balance) }} RON</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
             <h2>Adauga o tranzactie</h2>
 
             <form method="POST">
                 <label>Suma:</label>
                 <input type="number" name="suma" step="0.01" min="0.01" required>
 
+                <label>Tip:</label>
+                <select name="tip" id="tip" onchange="changeCategories()">
+                    <option value="expense">Cheltuiala</option>
+                    <option value="income">Venit</option>
+                </select>
+
                 <label>Categorie:</label>
-                <select name="categorie">
-                    <option>Mancare</option>
-                    <option>Transport</option>
-                    <option>Cumparaturi</option>
-                    <option>Altele</option>
+                <select name="categorie" id="categorie">
+                    <option value="Mancare">Mancare</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Cumparaturi">Cumparaturi</option>
+                    <option value="Facturi">Facturi</option>
+                    <option value="Altele">Altele</option>
                 </select>
 
                 <button type="submit">Adauga</button>
@@ -36,16 +64,24 @@
             <h2>Tranzactiile mele</h2>
 
             {% if transactions %}
-                <table border="1" cellpadding="10">
+                <table>
                     <tr>
                         <th>Suma</th>
+                        <th>Tip</th>
                         <th>Categorie</th>
                         <th>Data</th>
                     </tr>
 
                     {% for transaction in transactions %}
                     <tr>
-                        <td>{{ transaction[1] }} RON</td>
+                        <td>{{ "%.2f"|format(transaction[1]) }} RON</td>
+                        <td>
+                            {% if transaction[2] == "income" %}
+                                Venit
+                            {% else %}
+                                Cheltuiala
+                            {% endif %}
+                        </td>
                         <td>{{ transaction[3] }}</td>
                         <td>{{ transaction[5] }}</td>
                     </tr>
@@ -57,6 +93,32 @@
         </div>
 
     </div>
+
+    <script>
+        function changeCategories() {
+            let type = document.getElementById("tip").value;
+            let category = document.getElementById("categorie");
+
+            category.innerHTML = "";
+
+            let categories;
+
+            if (type === "income") {
+                categories = ["Salariu", "Bursa", "Cadouri", "Altele"];
+            } else {
+                categories = ["Mancare", "Transport", "Cumparaturi", "Facturi", "Altele"];
+            }
+
+            for (let item of categories) {
+                let option = document.createElement("option");
+                option.value = item;
+                option.textContent = item;
+                category.appendChild(option);
+            }
+        }
+
+        changeCategories();
+    </script>
 
 </body>
 </html>

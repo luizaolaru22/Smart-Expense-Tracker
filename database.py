@@ -22,14 +22,14 @@ def create_database():
     conn.close()
 
 
-def add_transaction(amount, category):
+def add_transaction(amount, transaction_type, category):
     conn = sqlite3.connect("expenses.db")
     cursor = conn.cursor()
 
     cursor.execute("""
         INSERT INTO transactions (amount, type, category, description, date)
         VALUES (?, ?, ?, ?, ?)
-    """, (amount, "expense", category, "", date.today().isoformat()))
+    """, (amount, transaction_type, category, "", date.today().isoformat()))
 
     conn.commit()
     conn.close()
@@ -44,6 +44,25 @@ def get_transactions():
 
     conn.close()
     return transactions
+
+
+def get_total(transaction_type):
+    conn = sqlite3.connect("expenses.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT SUM(amount) FROM transactions
+        WHERE type = ?
+    """, (transaction_type,))
+
+    total = cursor.fetchone()[0]
+
+    conn.close()
+
+    if total is None:
+        return 0
+
+    return total
 
 
 if __name__ == "__main__":
